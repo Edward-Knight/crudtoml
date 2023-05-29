@@ -15,6 +15,12 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.3.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [tomlkit ~= 0.8]  # keep in sync with pyproject.toml
+        args: [--strict, --pretty]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.0.270
     hooks:

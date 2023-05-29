@@ -37,7 +37,7 @@ class ColorfulFormatter(logging.Formatter):
         logging.CRITICAL: "\033[31;1m",  # red and bold
     }
 
-    def format(self, record) -> str:
+    def format(self, record: logging.LogRecord) -> str:
         # lowercase the level name
         record = copy.copy(record)
         record.levelname = record.levelname.lower()
@@ -63,7 +63,7 @@ TOMLContainer = dict[str | int, TOMLType] | list[TOMLType]
 
 
 @functools.lru_cache(1)
-def get_logger():
+def get_logger() -> logging.Logger:
     return logging.getLogger("crudtoml")
 
 
