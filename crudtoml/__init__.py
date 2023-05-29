@@ -1,6 +1,7 @@
 """Perform CRUD operations on TOML files.
 
-A command-line interface for reading and editing TOML documents in a style-preserving way.
+A command-line interface for reading and editing TOML documents
+in a style-preserving way.
 """
 import argparse
 import copy
@@ -73,7 +74,7 @@ def configure_logging(debug: bool) -> None:
             "formatters": {
                 "colorful": {
                     "()": ColorfulFormatter,
-                    "fmt": "crudtoml: %(levelname)s: %(message)s"
+                    "fmt": "crudtoml: %(levelname)s: %(message)s",
                 },
             },
             "handlers": {
@@ -103,14 +104,19 @@ def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> T
             try:
                 subdoc = subdoc[int(pathlet)]
             except ValueError:
-                raise CrudtomlError(f"cannot interpret '{pathlet}' as an integer index into {last_path}")
+                raise CrudtomlError(
+                    f"cannot interpret '{pathlet}' as an integer index into {last_path}"
+                )
             except IndexError:
                 # mypy forgets that subdoc is a list here
                 if create:
                     subdoc.append({})  # type: ignore[union-attr]
                     subdoc = subdoc[-1]  # type: ignore[index]
                 else:
-                    raise CrudtomlError(f"'{pathlet}' is not a valid index into {last_path} (length {len(subdoc)})")  # type: ignore[arg-type]
+                    raise CrudtomlError(
+                        f"'{pathlet}' is not a valid index into {last_path} "
+                        f"(length {len(subdoc)})"  # type: ignore[arg-type]
+                    )
         elif isinstance(subdoc, dict):
             try:
                 subdoc = subdoc[pathlet]
@@ -122,7 +128,9 @@ def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> T
                 else:
                     raise CrudtomlError(f"cannot find '{pathlet}' in {last_path}")
         else:
-            raise CrudtomlError(f"cannot find '{pathlet}' in {last_path} as it is not a collection")
+            raise CrudtomlError(
+                f"cannot find '{pathlet}' in {last_path} as it is not a collection"
+            )
         last_path = f"'{pathlet}'"
     return subdoc
 
@@ -138,14 +146,25 @@ def format_raw(doc: TOMLType | str | int) -> str:
 def main(argv: list[str] | None = None) -> NoReturn:
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--in-place", action="store_true")
-    parser.add_argument("-r", "--raw", action="store_true", help="instead of outputting TOML, output raw values")
+    parser.add_argument(
+        "-r",
+        "--raw",
+        action="store_true",
+        help="instead of outputting TOML, output raw values",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("toml_file")
 
     op_subparsers = parser.add_subparsers(title="operation", dest="op", required=True)
-    add_path = lambda p: p.add_argument("path", nargs="*")
-    add_key = lambda p: p.add_argument("key")
-    add_value = lambda p: p.add_argument("value", type=tomlkit.value)
+
+    def add_path(p: argparse.ArgumentParser) -> None:
+        p.add_argument("path", nargs="*")
+
+    def add_key(p: argparse.ArgumentParser) -> None:
+        p.add_argument("key")
+
+    def add_value(p: argparse.ArgumentParser) -> None:
+        p.add_argument("value", type=tomlkit.value)
 
     create_parser = op_subparsers.add_parser("create")
     add_path(create_parser)
@@ -223,7 +242,10 @@ def main(argv: list[str] | None = None) -> NoReturn:
             try:
                 index = int(args.key)
             except ValueError:
-                logger.error(f"cannot interpret key '{args.key}' as an integer index into {last_path}")
+                logger.error(
+                    f"cannot interpret key '{args.key}' as an integer index "
+                    f"into {last_path}"
+                )
                 sys.exit(1)
             try:
                 if args.op == "create":
@@ -236,10 +258,15 @@ def main(argv: list[str] | None = None) -> NoReturn:
                 elif args.op == "delete":
                     del subdoc[index]
             except IndexError:
-                logger.error(f"key '{args.key}' is not a valid index into {last_path} (length {len(subdoc)})")
+                logger.error(
+                    f"key '{args.key}' is not a valid index "
+                    f"into {last_path} (length {len(subdoc)})"
+                )
                 sys.exit(1)
         else:
-            logger.error(f"cannot access key {args.key} on {last_path} as it is not a collection")
+            logger.error(
+                f"cannot access key {args.key} on {last_path} as it is not a collection"
+            )
             sys.exit(1)
 
     # format modified TOML for output
