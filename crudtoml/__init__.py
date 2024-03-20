@@ -12,6 +12,7 @@ import os
 import pathlib
 import shlex
 import sys
+import typing
 from typing import NoReturn
 
 import tomlkit
@@ -110,23 +111,25 @@ def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> T
                 )
             except IndexError:
                 # mypy forgets that subdoc is a list here
+                subdoc = typing.cast(list[TOMLType], subdoc)
                 if create:
-                    subdoc.append({})  # type: ignore[union-attr]
-                    subdoc = subdoc[-1]  # type: ignore[index]
+                    subdoc.append({})
+                    subdoc = subdoc[-1]
                 else:
                     raise CrudtomlError(
                         f"'{pathlet}' is not a valid index into {last_path} "
-                        f"(length {len(subdoc)})"  # type: ignore[arg-type]
+                        f"(length {len(subdoc)})"
                     )
         elif isinstance(subdoc, dict):
             try:
                 subdoc = subdoc[pathlet]
             except KeyError:
                 # mypy forgets that subdoc is a dict here
+                subdoc = typing.cast(dict[str | int, TOMLType], subdoc)
                 if create:
                     logger.debug(f"creating table for '{pathlet}'")
-                    subdoc[pathlet] = {}  # type: ignore[index, call-overload]
-                    subdoc = subdoc[pathlet]  # type: ignore[index, call-overload]
+                    subdoc[pathlet] = {}
+                    subdoc = subdoc[pathlet]
                 else:
                     raise CrudtomlError(f"cannot find '{pathlet}' in {last_path}")
         else:
