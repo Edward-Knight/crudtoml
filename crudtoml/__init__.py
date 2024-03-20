@@ -126,6 +126,7 @@ def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> T
                 if create:
                     logger.debug(f"creating table for '{pathlet}'")
                     subdoc[pathlet] = {}  # type: ignore[index, call-overload]
+                    subdoc = subdoc[pathlet]  # type: ignore[index, call-overload]
                 else:
                     raise CrudtomlError(f"cannot find '{pathlet}' in {last_path}")
         else:
