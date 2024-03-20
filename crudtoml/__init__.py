@@ -95,12 +95,13 @@ def configure_logging(debug: bool) -> None:
 
 
 def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> TOMLType:
+    logger = get_logger()
     last_path = "the document root"
     subdoc: TOMLType = doc
     for pathlet in path:
-        get_logger().debug(f"resolving '{pathlet}'")
+        logger.debug(f"resolving '{pathlet}'")
         if isinstance(subdoc, list):
-            get_logger().debug(f"resolving '{pathlet}' as an index")
+            logger.debug(f"resolving '{pathlet}' as an index")
             try:
                 subdoc = subdoc[int(pathlet)]
             except ValueError:
@@ -123,7 +124,7 @@ def resolve_path(doc: TOMLContainer, path: list[str], create: bool = False) -> T
             except KeyError:
                 # mypy forgets that subdoc is a dict here
                 if create:
-                    get_logger().debug(f"creating table for '{pathlet}'")
+                    logger.debug(f"creating table for '{pathlet}'")
                     subdoc[pathlet] = {}  # type: ignore[index, call-overload]
                 else:
                     raise CrudtomlError(f"cannot find '{pathlet}' in {last_path}")
