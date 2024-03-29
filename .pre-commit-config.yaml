@@ -21,6 +21,7 @@ repos:
       - id: mypy
         additional_dependencies: [tomlkit ~= 0.8]  # keep in sync with pyproject.toml
         args: [--strict, --pretty]
+        exclude: tests
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.0.270
     hooks:

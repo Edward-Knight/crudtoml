@@ -32,3 +32,26 @@ crudtoml = "crudtoml:main"
 
 [project.urls]
 Home = "https://github.com/Edward-Knight/crudtoml"
+
+[project.optional-dependencies]
+test = [
+    "pytest ~= 7.3",
+    "pytest-cov ~= 4.1",
+]
+
+
+[tool.pytest.ini_options]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+    "--cov=crudtoml",
+    "--cov-branch",
+]
+required_plugins = [
+    "pytest-cov",
+]
+log_file_level = "DEBUG"
+xfail_strict = true
+filterwarnings = [
+    "error",
+]
