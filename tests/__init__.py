@@ -1,6 +1,11 @@
 """Tests for crudtoml."""
 import contextlib
+import io
 import importlib.resources
+
+import pytest
+
+import crudtoml
 
 
 class redirect_stdin(contextlib._RedirectStream):
@@ -10,6 +15,23 @@ class redirect_stdin(contextlib._RedirectStream):
     """
 
     _stream = "stdin"
+
+
+def run(
+    capsys, *args: str, input_data: str = "", exit_status: int = 0
+) -> tuple[str, str]:
+    """Shorthand for running crudtoml's main function.
+
+    Redirects stdin and catches the SystemExit, returning a tuple of stdout and stderr.
+    """
+    with (
+        redirect_stdin(io.StringIO(input_data)),
+        pytest.raises(SystemExit, match=str(exit_status)),
+    ):
+        crudtoml.main(args)
+
+    captured = capsys.readouterr()
+    return captured.out, captured.err
 
 
 # load test data from file on import

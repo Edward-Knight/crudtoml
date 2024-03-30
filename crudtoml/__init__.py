@@ -13,7 +13,7 @@ import pathlib
 import shlex
 import sys
 import typing
-from typing import NoReturn
+from typing import NoReturn, Sequence
 
 import tomlkit
 import tomlkit.exceptions
@@ -148,7 +148,7 @@ def format_raw(doc: TOMLType | str | int) -> str:
     return shlex.quote(str(doc))
 
 
-def main(argv: list[str] | None = None) -> NoReturn:
+def main(argv: Sequence[str] | None = None) -> NoReturn:
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--in-place", action="store_true")
     parser.add_argument(

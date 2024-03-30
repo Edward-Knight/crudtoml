@@ -1,10 +1,5 @@
 """Tests for the read operation."""
-import io
-import crudtoml
-
-import pytest
-
-from tests import redirect_stdin
+from tests import run
 import tests.test_data
 
 
@@ -16,9 +11,4 @@ def test_roundtrip(capsys):
     """
     input_data = tests.TEST_DATA["example"]
 
-    with redirect_stdin(io.StringIO(input_data)), pytest.raises(SystemExit, match="0"):
-        crudtoml.main(["-", "read"])
-
-    captured = capsys.readouterr()
-    assert captured.out == input_data
-    assert captured.err == ""
+    assert run(capsys, "-", "read", input_data=input_data) == (input_data, "")
