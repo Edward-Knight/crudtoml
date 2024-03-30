@@ -29,7 +29,7 @@ name = "crudtoml"
 $ crudtoml test.toml create project dob 2023-05-23
 [project]
 name = "crudtoml"
-dob = 2023-06-23
+dob = 2023-05-23
 ```
 
 ### Read!
